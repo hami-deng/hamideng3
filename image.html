@@ -8,21 +8,29 @@
     body {
       font-family: Arial, sans-serif;
       line-height: 1.6;
+      background-color: #f4f4f4;
+      padding: 20px;
     }
 
     h1 {
       text-align: center;
       color: #333;
-      font-family:楷体;
+      font-family: 楷体;
+      font-size: 36px;
+      margin-bottom: 20px;
     }
 
     h2 {
       color: #555;
+      font-size: 24px;
+      margin-top: 30px;
     }
 
     p {
       text-align: justify;
       text-indent: 2em;
+      font-size: 16px;
+      color: #333;
     }
 
     img {
@@ -30,10 +38,36 @@
       height: auto;
       display: block;
       margin: 20px auto;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
     }
 
     ol {
       margin-left: 2em;
+      counter-reset: step;
+    }
+
+    ol li {
+      position: relative;
+      margin-bottom: 20px;
+      padding-left: 30px;
+    }
+
+    ol li:before {
+      content: counter(step);
+      counter-increment: step;
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 20px;
+      font-weight: bold;
+      color: #fff;
+      background-color: #007BFF;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 25px;
     }
 
     ul {
@@ -42,12 +76,15 @@
     }
 
     li {
-      margin-bottom: 5px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: #333;
     }
 
   .marked {
       background-color: #ffff99;
       padding: 2px 5px;
+      border-radius: 3px;
     }
   </style>
 </head>
