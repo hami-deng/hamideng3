@@ -1,0 +1,26 @@
+.page {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: transform 1s ease;
+}
+
+.page:not(:first-child) {
+  transform: translateX(100%); /* 将非第一个页面初始偏移到屏幕右侧 */
+}
+
+.page.active {
+  transform: translateX(0);
+  z-index: 1;
+}
+
+.page.hide {
+  transform: translateX(-100%);
+  z-index: 0;
+}
