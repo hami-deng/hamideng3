@@ -4,161 +4,56 @@
 <head>
   <meta charset="UTF-8">
   <title>现代诗网页</title>
-  <link rel="stylesheet" href="styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
       line-height: 1.6;
-      background-color: #f0f8ff;
-      overflow: hidden;
     }
 
     h1 {
       text-align: center;
       color: #333;
-      font-family: 楷体;
     }
 
     p {
       text-align: center;
       text-indent: 2em;
-      color: #333333;
-      font-family: 楷体;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 1s ease, transform 1s ease;
     }
 
     ruby {
       display: block;
       text-align: center;
-      font-size: 14px;
-      color: #666666;
-      background-color: #f9f9f9;
-      padding: 5px;
-      border-radius: 3px;
     }
 
     rt {
       font-style: italic;
     }
-
-    b {
-      font-size: 18px;
-      color: #0066cc;
-    }
-
- .section-separator {
-      width: 80%;
-      height: 1px;
-      background-color: #cccccc;
-      margin: 20px auto;
-    }
-
-    mark {
-      background-color: #ffff99;
-      padding: 2px 5px;
-    }
-
- .page {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      position: absolute;
-      left: 0;
-      top: 0;
-      transition: transform 1s ease;
-    }
-
-   .page.active {
-      transform: translateX(0);
-      z-index: 1;
-    }
-
-   .page.hide {
-      transform: translateX(-100%);
-      z-index: 0;
-    }
   </style>
 </head>
 
 <body>
-  <div class="page active" data-page="1">
-    <h1>《相信未来》</h1>
-    <p>当蜘蛛网无情地查封了我的炉台，</p>
-    <p>当灰烬的余烟叹息着贫困的悲哀，</p>
-    <p>我依然固执地铺平失望的灰烬，</p>
-    <p><mark><b>用美丽的雪花写下：相信未来。</b></mark></p>
-    <div class="section-separator"></div>
-    <p>当我的紫葡萄化为深秋的露水<sup>1</sup>，</p>
-    <p>当我的鲜花依偎在别人的情怀<sup>2</sup>，</p>
-    <p>我依然固执地用凝霜的枯藤，</p>
-    <p><mark><b>在凄凉的大地上写下：相信未来。</b></mark></p>
-    <div class="section-separator"></div>
-    <p>我要用手指那涌向天边的排浪，</p>
-    <p>我要用手掌那托住太阳的大海，</p>
-    <p>摇曳着曙光那枝温暖漂亮的笔杆，</p>
-    <p><mark><b>用孩子的笔体写下：相信未来。</b></mark></p>
-    <ruby>
-      <rt><small>注：<sup>1</sup>象征希望的破灭，<sup>2</sup>暗示爱情的失落</small></rt>
-    </ruby>
-  </div>
-  <div class="page" data-page="2">
-    <h2>诗歌赏析</h2>
-    <p>在《相信未来》中，诗人发出了一个理想主义者真诚而深情的呼唤，阐明了一种积极的人生态度。无论是面对“蜘蛛网无情地查封了”的“炉台”“失望的灰烬”，还是“凝露的枯藤”“凄凉的大地”，诗人都并不气馁和绝望，而是要用“美丽的雪花”“温暖的曙光”和“孩子的笔体”写下“相信未来”，为那个特殊的时代镌刻墓碑、昭示希望。尽管万物凋零、大地冰封，但诗人的内心依然坚守着希望，要用自己内心的火热，来抵抗外界的凄凉、寒冷与孤独这首诗以其深沉的情感和坚定的信念感染着读者。诗中通过一系列意象的描绘，如“蜘蛛网查封炉台”“紫葡萄化为露水”等，展现了生活的苦难与挫折，但诗人始终“固执”地相信未来，表达了一种在困境中不屈不挠的精神。<a href="https://example.com/poetry-analysis" target="_blank">更多诗歌解读</a></p>
-  </div>
-  <div class="page" data-page="3">
-    <h2>作者信息</h2>
-    <p>食指（1948—），本名郭路生，因母亲在行军途中分娩，所以起名路生。笔名食指，中国著名诗人。小学开始热爱诗歌，20岁时写的名作《相信未来》《海洋三部曲》《这是四点零八分的北京》等以手抄本的形式在社会上广为流传。阿城插队内蒙古时托人抄录了食指的全部诗作；陈凯歌考电影学院时曾朗诵食指的《写在朋友结婚的时候》。1973年食指被诊断患有精神分裂症，入北医三院就医。出院后继续写作。1990年在北京第三福利院接受治疗。2001年4月28日与已故诗人海子共同获得第三届人民文学奖诗歌奖。著有诗集《相信未来》《食指、黑大春现代抒情诗合集》《诗探索金库·食指卷》《食指的诗》。]</p>
-  </div>
-  <div class="page" data-page="4">
-    <h2>创作背景</h2>
-    <p>《相信未来》这首诗是当时批判现实的代表作，写于1968年，正值“文革”初狂热的巅峰时期，诗人在经历了初期的盲动，被政治浪潮冲向农村“广阔天地”之后，对这场政治运动已有了一些较为清醒的看法，特别是对“文革”中个人命运的遭遇有了切身的感受，曾经有过的热烈、单纯的理想遭到了狂风暴雨的冲刷。内心充满了失落、迷茫和悲哀，但他又不甘于轻易地放弃理想和希望，于是。希望与绝望的剧烈冲突，经由他的笔流淌出来。在这样一个混乱、迷惘的年代，诗人和有相同境遇的人深深感到命运的悲剧性，随即写下这首诗来自我鼓励，恪守自己对明天的承诺。</p>
-  </div>
-  
-  <script>
-    const pages = document.querySelectorAll('.page');
-    let currentPage = 1;
-    let isAutoScrolling = false;
-    let autoScrollInterval;
-
-    function nextPage() {
-      if (currentPage < pages.length) {
-        // 隐藏所有页面的段落动画
-        const allParagraphs = document.querySelectorAll('p');
-        allParagraphs.forEach(paragraph => {
-          paragraph.style.opacity = 0;
-          paragraph.style.transform = 'translateY(20px)';
-        });
-
-        pages[currentPage].classList.remove('active');
-        pages[currentPage].classList.add('hide');
-        currentPage++;
-        pages[currentPage].classList.add('active');
-
-        // 触发新显示页面的段落动画
-        const paragraphs = pages[currentPage].querySelectorAll('p');
-        paragraphs.forEach((paragraph, index) => {
-          setTimeout(() => {
-            paragraph.style.opacity = 1;
-            paragraph.style.transform = 'translateY(0)';
-          }, index * 500);
-        });
-      }
-    }
-
-    function startAutoScroll() {
-      if (!isAutoScrolling) {
-        isAutoScrolling = true;
-        autoScrollInterval = setInterval(nextPage, 5000);
-      }
-    }
-
-    function stop
-  </script>
+  <h1>《相信未来》</h1>
+  <p>当蜘蛛网无情地查封了我的炉台，</p>
+  <p>当灰烬的余烟叹息着贫困的悲哀，</p>
+  <p>我依然固执地铺平失望的灰烬，</p>
+  <p><b>用美丽的雪花写下：相信未来。</b></p>
+  <br>
+  <p>当我的紫葡萄化为深秋的露水<sup>1</sup>，</p>
+  <p>当我的鲜花依偎在别人的情怀<sup>2</sup>，</p>
+  <p>我依然固执地用凝霜的枯藤，</p>
+  <p><b>在凄凉的大地上写下：相信未来。</b></p>
+  <br>
+  <p>我要用手指那涌向天边的排浪，</p>
+  <p>我要用手掌那托住太阳的大海，</p>
+  <p>摇曳着曙光那枝温暖漂亮的笔杆，</p>
+  <p><b>用孩子的笔体写下：相信未来。</b></p>
+  <p></p>
+  <br>
+  <ruby>
+    <rt><small>注：<sup>1</sup>象征希望的破灭，<sup>2</sup>暗示爱情的失落</small></rt>
+  </ruby>
+  <h2>诗歌赏析</h2>
+  <p>这首诗以其深沉的情感和坚定的信念感染着读者。诗中通过一系列意象的描绘，如“蜘蛛网查封炉台”“紫葡萄化为露水”等，展现了生活的苦难与挫折，但诗人始终“固执”地相信未来，表达了一种在困境中不屈不挠的精神。</p>
 </body>
 
 </html>
