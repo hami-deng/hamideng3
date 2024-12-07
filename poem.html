@@ -118,33 +118,25 @@
     <h2>创作背景</h2>
     <p>《相信未来》这首诗是当时批判现实的代表作，写于1968年，正值“文革”初狂热的巅峰时期，诗人在经历了初期的盲动，被政治浪潮冲向农村“广阔天地”之后，对这场政治运动已有了一些较为清醒的看法，特别是对“文革”中个人命运的遭遇有了切身的感受，曾经有过的热烈、单纯的理想遭到了狂风暴雨的冲刷。内心充满了失落、迷茫和悲哀，但他又不甘于轻易地放弃理想和希望，于是。希望与绝望的剧烈冲突，经由他的笔流淌出来。在这样一个混乱、迷惘的年代，诗人和有相同境遇的人深深感到命运的悲剧性，随即写下这首诗来自我鼓励，恪守自己对明天的承诺。</p>
   </div>
+  
   <script>
-    const pages = document.querySelectorAll('.page');
-    let currentPage = 1;
-
-    function nextPage() {
-      if (currentPage < pages.length) {
-        pages[currentPage].classList.remove('active');
-        pages[currentPage].classList.add('hide');
-        currentPage++;
-        pages[currentPage].classList.add('active');
-      }
+    const allParagraphs = [];
+    for (let i = 1; i <= 4; i++) {
+      const page = document.querySelector(`.page[data-page="${i}"]`);
+      const paragraphs = page.querySelectorAll('p');
+      allParagraphs.push(...paragraphs);
     }
 
-    document.addEventListener('keydown', function (event) {
-      if (event.key === 'ArrowRight' || event.key === ' ') {
-        nextPage();
-      }
-    });
-
-    // 初始化时显示第一个页面的动画
     setTimeout(() => {
-      const paragraphs = document.querySelectorAll('p');
-      paragraphs.forEach((paragraph, index) => {
+      allParagraphs.forEach((paragraph, index) => {
+        const pageNumber = Math.floor(index / 9) + 1; // 假设每个页面最多有9个段落（根据实际情况调整）
+        const delay = (index % 9) * 500 + (pageNumber - 1) * 4500; // 根据页面和段落位置计算延迟时间
         setTimeout(() => {
-          paragraph.style.opacity = 1;
-          paragraph.style.transform = 'translateY(0)';
-        }, index * 500);
+          if (document.querySelector(`.page[data-page="${pageNumber}"]`).classList.contains('active')) {
+            paragraph.style.opacity = 1;
+            paragraph.style.transform = 'translateY(0)';
+          }
+        }, delay);
       });
     }, 500);
   </script>
