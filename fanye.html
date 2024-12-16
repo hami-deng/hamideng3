@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>现代诗歌翻页展示</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .scroll-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            scroll-snap-type: y mandatory;
+            overflow-y: scroll;
+        }
+
+        .page {
+            display: flex;
+            flex: 0 0 100vh; /* 每个页面的高度为视窗高度 */
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            scroll-snap-align: start;
+            color: white;
+        }
+
+        .page h1, .page p {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="scroll-container">
+        <section class="page" style="background-color: #ffcccc;">
+            <h1>第一页 - 诗一</h1>
+            <p>这是第一首现代诗歌的内容...</p>
+        </section>
+        <section class="page" style="background-color: #ccffcc;">
+            <h1>第二页 - 诗二</h1>
+            <p>这是第二首现代诗歌的内容...</p>
+        </section>
+        <section class="page" style="background-color: #ccccff;">
+            <h1>第三页 - 诗三</h1>
+            <p>这是第三首现代诗歌的内容...</p>
+        </section>
+    </div>
+</body>
+</html>
