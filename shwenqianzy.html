@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ECharts Line Chart</title>
+    <!-- 引入 ECharts 文件 -->
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <style>
+        #main {
+            width: 100%;
+            height: 600px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="main"></div>
+
+    <script type="text/javascript">
+        // 假设这里的数据是从您的 Excel 文件中提取并转换成 JSON 格式的
+        const data = {
+            "school": "中国传媒大学",
+            "majors": [
+                {"name": "数字媒体技术", "data": [663, 656, 633, 624, 645]},
+                {"name": "数字媒体技术（游戏设计技术方向）", "data": [657, 655, 650, 623, 637]},
+                {"name": "广告学（数字营销方向）", "data": [661, 653, 643, 613, 621]},
+                {"name": "传播学", "data": [662, 651, 639, 633, 625]},
+                {"name": "智能科学与技术（智能媒体技术方向）", "data": [660, 651, 627, 0, 620]}, // 使用0代替缺失值
+                {"name": "广播电视工程", "data": [660, 648, 629, 612, 620]},
+                {"name": "自动化（演艺工程与智能技术方向）", "data": [658, 644, 627, 607, 613]},
+                {"name": "文化产业管理", "data": [658, 647, 627, 0, 612]}, // 使用0代替缺失值
+                {"name": "工商管理类", "data": [658, 642, 627, 605, 613]},
+                {"name": "电子信息工程", "data": [658, 643, 630, 612, 613]},
+                {"name": "通信工程", "data": [657, 645, 631, 612, 616]},
+                {"name": "数据科学与大数据技术（传媒大数据方向）", "data": [657, 645, 634, 614, 627]},
+                {"name": "新闻传播学类（中外合作办学）", "data": [652, 638, 612, 0, 0]}, // 使用0代替缺失值
+                {"name": "新闻学（数据新闻报道/数据新闻方向）", "data": [0, 650, 641, 641, 628]}, // 使用0代替缺失值
+                {"name": "人工智能", "data": [0, 644, 629, 610, 622]}, // 使用0代替缺失值
+                {"name": "管理科学与工程类", "data": [643, 643, 625, 604, 612]},
+                {"name": "网络空间安全", "data": [0, 643, 629, 619, 631]}, // 使用0代替缺失值
+                {"name": "艺术管理", "data": [0, 0, 627, 622, 612]}, // 使用0代替缺失值
+                {"name": "智能装备与系统（演艺工程与智能技术方向）", "data": [0, 627, 627, 607, 613]}, // 使用0代替缺失值
+                {"name": "传播学（中外合作办学）", "data": [612, 638, 612, 618, 583]},
+                {"name": "广告学（中外合作办学）", "data": [0, 0, 614, 608, 577]}, // 使用0代替缺失值
+                {"name": "智能科学与技术（中外合作办学海南国际学院）", "data": [0, 0, 0, 0, 581]} // 使用0代替缺失值
+            ],
+            "years": ["2019", "2020", "2021", "2022", "2023"]
+        };
+
+        // 初始化 ECharts 实例
+        var myChart = echarts.init(document.getElementById('main'));
+
+        // 指定图表的配置项和数据
+        var option = {
+            color: ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'],
+            title: {
+                text: '中国传媒大学各专业最低录取分变化趋势'
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            legend: {
+                data: data.majors.map(major => major.name)
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: data.years
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: data.majors.map((major, index) => ({
+                name: major.name,
+                type: 'line',
+                stack: 'Total',
+                smooth: true,
+                lineStyle: {
+                    width: 0
+                },
+                showSymbol: false,
+                areaStyle: {
+                    opacity: 0.8,
+                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                        {
+                            offset: 0,
+                            color: getColor(index).start
+                        },
+                        {
+                            offset: 1,
+                            color: getColor(index).end
+                        }
+                    ])
+                },
+                emphasis: {
+                    focus: 'series'
+                },
+                data: major.data
+            }))
+        };
+
+        function getColor(index) {
+            const colors = ['#80FFA5', '#00DDFF', '#37A2FF', '#FF0087', '#FFBF00'];
+            return {
+                start: colors[index % colors.length],
+                end: colors[(index + 1) % colors.length]
+            };
+        }
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+</body>
+</html>
