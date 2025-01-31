@@ -252,7 +252,7 @@ if __name__ == "__main__":
     <div class="section">
         <h2>3. 词云图制作</h2>
         <p>
-            为了直观展示新闻标题中的关键词，我使用 Python 的 <code>jieba</code> 和 <code>wordcloud</code> 库制作了词云图。以下是制作过程的主要步骤：
+            为了直观展示新闻标题中的关键词，我使用 Python 的 <code>jieba</code> 和 <code>wordcloud</code> 库制作了词云图<strong>得到新闻报道的关键词有“deepseek”“模型”“崛起”“超越”“人工智能”“美国”等</strong>。以下是制作过程的主要步骤：
         </p>
         <ol>
             <li><strong>数据清洗</strong>：对新闻标题进行分词，去掉标点符号和停用词。</li>
@@ -285,7 +285,7 @@ wordcloud.to_file("wordcloud.png")
     <div class="section">
         <h2>4. 情感分析</h2>
         <p>
-            为了分析新闻标题的情感倾向，我使用 Python 的 <code>SnowNLP</code> 库对每条新闻标题进行情感分析。以下是分析过程的主要步骤：
+            为了分析新闻标题的情感倾向，我使用 Python 的 <code>SnowNLP</code> 库对每条新闻标题进行情感分析。<strong>得到情感分析统计结果:积极情感48条，消极情感25条，中性情感11条。</strong>以下是分析过程的主要步骤：
         </p>
         <ol>
             <li><strong>情感得分计算</strong>：使用 <code>SnowNLP</code> 计算每条新闻标题的情感得分。</li>
