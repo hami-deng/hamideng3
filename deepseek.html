@@ -59,10 +59,11 @@
             为了分析 DeepSeek 爆火后的新闻报道数据，我利用 Python 的 Selenium 库编写了一个自动化程序，在火狐浏览器上通过百度搜索爬取相关新闻标题。以下是爬取过程的主要步骤：
         </p>
         <ol>
-            <li><strong>环境搭建</strong>：安装 Python 的 Selenium 库和 Firefox 浏览器驱动（GeckoDriver）。</li>
-            <li><strong>搜索关键词</strong>：在百度搜索框中输入关键词“DeepSeek 最新消息”，并点击搜索按钮。</li>
-            <li><strong>爬取新闻标题</strong>：使用 Selenium 定位搜索结果页面的新闻标题元素，提取每条新闻的标题。</li>
-            <li><strong>保存数据</strong>：将爬取的新闻标题保存到本地 CSV 文件中（<code>deepseek_news.csv</code>）。</li>
+            <li><strong>环境搭建</strong>：安装必要的 Python 的 Selenium 库和 Firefox 浏览器驱动（GeckoDriver）。</li>
+            <li><strong>配置浏览器和初始化</strong>:配置 Firefox 浏览器选项并初始化浏览器,例如无头模式、语言偏好等,自动下载和管理 GeckoDriver。</li>
+            <li><strong>新闻标题数据爬取</strong>：在百度搜索页面上输入关键词“DeepSeek 最新消息”，使用 Selenium 定位搜索结果页面的新闻标题元素，提取每条新闻的标题。</li>
+            <li><strong>自动翻页和保存</strong>：通过自动程序来点击“下一页”按钮爬取多页数据，将爬取的标题分批写入 CSV 文件。</li>
+            <li><strong>日志记录和异常处理</strong>：使用 logging 模块记录程序运行日志，并捕获和处理异常。</li>
         </ol>
         <div class="code">
             <pre>
