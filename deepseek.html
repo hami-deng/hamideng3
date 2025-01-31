@@ -69,30 +69,169 @@
 from selenium import webdriver
 from selenium.webdriver import FirefoxOptions
 from selenium.webdriver.common.by import By
-import pandas as pd
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from webdriver_manager.firefox import GeckoDriverManager
+import csv
+import time
+import logging
+import os
 
-# 配置浏览器
-opts = FirefoxOptions()
-driver = webdriver.Firefox(options=opts)
+# 设置日志记录
+logging.basicConfig(filename='debug.log', level=logging.DEBUG)
 
-# 访问百度搜索
-driver.get("https://www.baidu.com")
-search_box = driver.find_element(By.NAME, "wd")
-search_box.send_keys("DeepSeek 最新消息")
-search_box.submit()
+def main():
+    driver = None  # 提前声明 driver 变量
+    try:
+        logging.info("正在配置浏览器选项...")
+        print("正在配置浏览器选项...")
 
-# 爬取新闻标题
-titles = []
-for _ in range(5):  # 爬取 5 页
-    results = driver.find_elements(By.CSS_SELECTOR, "h3.t")
-    for result in results:
-        titles.append(result.text)
-    next_button = driver.find_element(By.XPATH, "//a[@class='n']")
-    next_button.click()
+        # 配置浏览器
+        opts = FirefoxOptions()
+        # opts.add_argument("--headless")  # 调试时先关闭无头模式
+        opts.set_preference("intl.accept_languages", "en-US")
 
-# 保存数据
-df = pd.DataFrame(titles, columns=["标题"])
-df.to_csv("deepseek_news.csv", index=False)
+        logging.info("正在初始化浏览器...")
+        print("正在初始化浏览器...")
+
+        # 初始化浏览器
+        service = webdriver.firefox.service.Service(GeckoDriverManager().install())
+        driver = webdriver.Firefox(service=service, options=opts)
+        driver.implicitly_wait(10)
+
+        logging.info("正在访问百度搜索页面...")
+        print("正在访问百度搜索页面...")
+
+        # 执行搜索
+        search_query = "deepseek的最新相关消息"
+        driver.get(f"https://www.baidu.com/s?wd={search_query}")
+
+        logging.info("正在等待搜索结果加载...")
+        print("正在等待搜索结果加载...")
+
+        # 等待搜索结果加载
+        WebDriverWait(driver, 15).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "div.result.c-container"))
+        )
+
+        logging.info("正在解析文章数据...")
+        print("正在解析文章数据...")
+
+        # 解析数据
+        titles = []
+        max_titles = 100  # 目标标题数量
+        page_count = 1  # 当前页码
+        batch_size = 10  # 每批写入 10 条
+        csv_file = "deepseek_news.csv"  # 输出文件名
+
+        # 初始化 CSV 文件（如果文件不存在，写入表头）
+        if not file_exists(csv_file):
+            logging.info(f"文件 {csv_file} 不存在，正在创建并写入表头...")
+            with open(csv_file, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow(['标题'])  # 写入表头
+        else:
+            logging.info(f"文件 {csv_file} 已存在，将追加数据...")
+
+        while len(titles) < max_titles:
+            logging.info(f"正在解析第 {page_count} 页数据...")
+            print(f"正在解析第 {page_count} 页数据...")
+
+            results = driver.find_elements(By.CSS_SELECTOR, "div.result.c-container")
+            for result in results:
+                if len(titles) >= max_titles:
+                    break
+                try:
+                    title_element = result.find_element(By.CSS_SELECTOR, "h3.t")
+                    title = title_element.text
+                    titles.append(title)
+                    logging.info(f"标题: {title}")
+                    print(f"标题: {title}")
+                except Exception as e:
+                    logging.error(f"解析标题时发生异常: {str(e)}")
+                    print(f"解析标题时发生异常: {str(e)}")
+
+            # 检查是否已达到目标数量
+            if len(titles) >= max_titles:
+                logging.info(f"已收集到 {len(titles)} 条标题，停止爬取...")
+                print(f"已收集到 {len(titles)} 条标题，停止爬取...")
+                break
+
+            # 尝试翻页
+            try:
+                next_page_button = driver.find_element(By.XPATH, "//a[@class='n' and contains(text(), '下一页')]")
+                if next_page_button:
+                    logging.info("找到下一页按钮，正在点击...")
+                    print("找到下一页按钮，正在点击...")
+                    driver.execute_script("arguments[0].scrollIntoView();", next_page_button)  # 滚动到按钮位置
+                    next_page_button.click()
+                    WebDriverWait(driver, 15).until(
+                        EC.presence_of_element_located((By.CSS_SELECTOR, "div.result.c-container"))
+                    )
+                    page_count += 1
+                    time.sleep(2)  # 添加适当的延迟
+                else:
+                    logging.info("没有找到下一页按钮，停止爬取...")
+                    print("没有找到下一页按钮，停止爬取...")
+                    break
+            except Exception as e:
+                logging.error(f"找不到下一页按钮或点击失败: {str(e)}")
+                print(f"找不到下一页按钮或点击失败: {str(e)}")
+                break
+
+            # 每爬取一批数据就写入 CSV 文件
+            if len(titles) % batch_size == 0:
+                logging.info(f"正在将第 {len(titles) // batch_size} 批数据写入 CSV 文件...")
+                print(f"正在将第 {len(titles) // batch_size} 批数据写入 CSV 文件...")
+                write_to_csv(titles, csv_file, append=True)
+
+        # 写入剩余的数据
+        if len(titles) % batch_size != 0:
+            logging.info(f"正在将剩余数据写入 CSV 文件...")
+            print(f"正在将剩余数据写入 CSV 文件...")
+            write_to_csv(titles, csv_file, append=True)
+
+        logging.info(f"数据解析完成，共收集到 {len(titles)} 条标题")
+        print(f"数据解析完成，共收集到 {len(titles)} 条标题")
+
+    except Exception as e:
+        logging.error(f"发生异常: {str(e)}")
+        print(f"发生异常: {str(e)}")
+        if driver is not None:
+            logging.info("保存错误截图...")
+            print("保存错误截图...")
+            driver.save_screenshot("error.png")
+    finally:
+        if driver is not None:
+            logging.info("正在关闭浏览器...")
+            print("正在关闭浏览器...")
+            driver.quit()
+
+def file_exists(filename):
+    """检查文件是否存在"""
+    try:
+        with open(filename, 'r'):
+            return True
+    except FileNotFoundError:
+        return False
+
+def write_to_csv(titles, filename, append=False):
+    """将标题写入 CSV 文件"""
+    mode = 'a' if append else 'w'
+    with open(filename, mode=mode, newline='', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        if not append and not file_exists(filename):
+            writer.writerow(['标题'])  # 写入表头
+        for title in titles:
+            writer.writerow([title])
+    logging.info(f"成功将 {len(titles)} 条标题写入 {filename}")
+
+if __name__ == "__main__":
+    logging.info("程序开始运行...")
+    print("程序开始运行...")
+    main()
+    logging.info("程序结束")
+    print("程序结束")
             </pre>
         </div>
     </div>
