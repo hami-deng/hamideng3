@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek 爆火后的新闻报道数据分析</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1, h2 {
+            color: #2c3e50;
+        }
+        .section {
+            background: #fff;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        .code {
+            background: #f4f4f4;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: "Courier New", Courier, monospace;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>DeepSeek 爆火后的新闻报道数据分析</h1>
+
+    <!-- DeepSeek 介绍 -->
+    <div class="section">
+        <h2>1. DeepSeek 介绍</h2>
+        <p>
+            DeepSeek，全称杭州深度求索人工智能基础技术研究有限公司，是一家创新型科技公司，成立于 2023 年 7 月 17 日。DeepSeek 使用数据蒸馏技术，从海量数据中提取出更为精炼、有用的信息，专注于开发先进的大语言模型（LLM）和相关技术。该公司由知名私募巨头幻方量化孕育而生，凭借其强大的技术背景和创新能力，迅速在人工智能领域崭露头角。
+        </p>
+        <p>
+            2025 年 1 月 27 日，DeepSeek 应用登顶苹果美国地区应用商店免费 APP 下载排行榜，在美区下载榜上超越了 ChatGPT。同日，苹果中国区应用商店免费榜显示，DeepSeek 成为中国区第一。根据公开报道，DeepSeek 的员工规模不及 OpenAI 的 1/5，百人出头的公司中，算子、推理框架、多模态等研发工程师以及深度学习方面的研究人员共有约 70 人，主要在北京分部，其余 30 多人在杭州总部，多为前端、产品以及商务人员。
+        </p>
+    </div>
+
+    <!-- 数据爬取 -->
+    <div class="section">
+        <h2>2. 数据爬取</h2>
+        <p>
+            为了分析 DeepSeek 爆火后的新闻报道数据，我利用 Python 的 Selenium 库编写了一个自动化程序，在火狐浏览器上通过百度搜索爬取相关新闻标题。以下是爬取过程的主要步骤：
+        </p>
+        <ol>
+            <li><strong>环境搭建</strong>：安装 Python 的 Selenium 库和 Firefox 浏览器驱动（GeckoDriver）。</li>
+            <li><strong>搜索关键词</strong>：在百度搜索框中输入关键词“DeepSeek 最新消息”，并点击搜索按钮。</li>
+            <li><strong>爬取新闻标题</strong>：使用 Selenium 定位搜索结果页面的新闻标题元素，提取每条新闻的标题。</li>
+            <li><strong>保存数据</strong>：将爬取的新闻标题保存到本地 CSV 文件中（<code>deepseek_news.csv</code>）。</li>
+        </ol>
+        <div class="code">
+            <pre>
+from selenium import webdriver
+from selenium.webdriver import FirefoxOptions
+from selenium.webdriver.common.by import By
+import pandas as pd
+
+# 配置浏览器
+opts = FirefoxOptions()
+driver = webdriver.Firefox(options=opts)
+
+# 访问百度搜索
+driver.get("https://www.baidu.com")
+search_box = driver.find_element(By.NAME, "wd")
+search_box.send_keys("DeepSeek 最新消息")
+search_box.submit()
+
+# 爬取新闻标题
+titles = []
+for _ in range(5):  # 爬取 5 页
+    results = driver.find_elements(By.CSS_SELECTOR, "h3.t")
+    for result in results:
+        titles.append(result.text)
+    next_button = driver.find_element(By.XPATH, "//a[@class='n']")
+    next_button.click()
+
+# 保存数据
+df = pd.DataFrame(titles, columns=["标题"])
+df.to_csv("deepseek_news.csv", index=False)
+            </pre>
+        </div>
+    </div>
+
+    <!-- 词云图制作 -->
+    <div class="section">
+        <h2>3. 词云图制作</h2>
+        <p>
+            为了直观展示新闻标题中的关键词，我使用 Python 的 <code>jieba</code> 和 <code>wordcloud</code> 库制作了词云图。以下是制作过程的主要步骤：
+        </p>
+        <ol>
+            <li><strong>数据清洗</strong>：对新闻标题进行分词，去掉标点符号和停用词。</li>
+            <li><strong>生成词云</strong>：将分词后的结果拼接成一个字符串，作为词云图的输入。</li>
+            <li><strong>保存和展示</strong>：将生成的词云图保存为 PNG 文件（<code>wordcloud.png</code>）。</li>
+        </ol>
+        <div class="code">
+            <pre>
+from wordcloud import WordCloud
+import jieba
+import matplotlib.pyplot as plt
+
+# 读取数据
+titles = pd.read_csv("deepseek_news.csv")["标题"].tolist()
+
+# 分词
+text = " ".join(jieba.lcut(" ".join(titles)))
+
+# 生成词云
+wordcloud = WordCloud(font_path="simhei.ttf", width=800, height=400, background_color="white").generate(text)
+
+# 保存词云图
+wordcloud.to_file("wordcloud.png")
+            </pre>
+        </div>
+        <img src="wordcloud.png" alt="词云图">
+    </div>
+
+    <!-- 情感分析 -->
+    <div class="section">
+        <h2>4. 情感分析</h2>
+        <p>
+            为了分析新闻标题的情感倾向，我使用 Python 的 <code>SnowNLP</code> 库对每条新闻标题进行情感分析。以下是分析过程的主要步骤：
+        </p>
+        <ol>
+            <li><strong>情感得分计算</strong>：使用 <code>SnowNLP</code> 计算每条新闻标题的情感得分。</li>
+            <li><strong>情感分类</strong>：根据情感得分将新闻标题分类为“积极”、“中性”或“消极”。</li>
+            <li><strong>统计结果</strong>：统计每种情感分类的数量，并生成饼图展示情感分布。</li>
+        </ol>
+        <div class="code">
+            <pre>
+from snownlp import SnowNLP
+
+# 情感分析
+sentiment_scores = [SnowNLP(title).sentiments for title in titles]
+
+# 分类
+sentiment_labels = ["积极" if score >= 0.6 else "消极" if score <= 0.4 else "中性" for score in sentiment_scores]
+
+# 统计结果
+sentiment_counts = pd.Series(sentiment_labels).value_counts()
+
+# 生成饼图
+plt.pie(sentiment_counts, labels=sentiment_counts.index, autopct='%1.1f%%')
+plt.title("情感分析结果")
+plt.savefig("sentiment_pie_chart.png")
+            </pre>
+        </div>
+        <img src="sentiment_pie_chart.png" alt="情感分析饼图">
+    </div>
+</body>
+</html>
