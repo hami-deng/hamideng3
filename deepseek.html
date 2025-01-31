@@ -250,38 +250,114 @@ if __name__ == "__main__":
         </ol>
         <div class="code">
             <pre>
-from wordcloud import WordCloud
-import jieba
+                import pandas as pd
+from snownlp import SnowNLP
+import re
 import matplotlib.pyplot as plt
+import os
 
-# 读取数据
-titles = pd.read_csv("deepseek_news.csv")["标题"].tolist()
+# 读取 CSV 文件
+file_path = "D:\\tensorflow\\deepseek_news.csv"  # 文件路径
+try:
+    df = pd.read_csv(file_path, on_bad_lines='skip', encoding='utf-8')
+except pd.errors.ParserError as e:
+    print(f"解析 CSV 文件时发生错误: {str(e)}")
+    df = pd.read_csv(file_path, on_bad_lines='skip', encoding='utf-8', sep='\t')  # 尝试使用制表符分隔
 
-# 分词
-text = " ".join(jieba.lcut(" ".join(titles)))
+# 打印文件信息
+print("CSV 文件列名:", df.columns)
+print(f"总数据量: {len(df)}")
+print(df.head())  # 打印前 5 行数据
 
-# 生成词云
-wordcloud = WordCloud(font_path="simhei.ttf", width=800, height=400, background_color="white").generate(text)
+# 提取标题列（根据实际列名调整）
+title_column = None
+for col in df.columns:
+    if "标题" in col:  # 检查列名是否包含 "标题"
+        title_column = col
+        break
 
-# 保存词云图
-wordcloud.to_file("wordcloud.png")
-            </pre>
-        </div>
-        <img src="词云图.png" alt="词云图">
-    </div>
+if title_column:
+    titles = df[title_column].tolist()  # 提取标题列
+else:
+    print("CSV 文件中没有找到包含 '标题' 的列")
+    titles = []
 
-    <!-- 情感分析 -->
-    <div class="section">
-        <h2>4. 情感分析</h2>
-        <p>
-            为了分析新闻标题的情感倾向，我使用 Python 的 <code>SnowNLP</code> 库对每条新闻标题进行情感分析。以下是分析过程的主要步骤：
-        </p>
-        <ol>
-            <li><strong>情感得分计算</strong>：使用 <code>SnowNLP</code> 计算每条新闻标题的情感得分。</li>
-            <li><strong>情感分类</strong>：根据情感得分将新闻标题分类为“积极”、“中性”或“消极”。</li>
-            <li><strong>统计结果</strong>：统计每种情感分类的数量，并生成饼图展示情感分布。</li>
-        </ol>
-        <div class="code">
+# 情感分析函数
+def analyze_sentiment(text):
+    # 使用 SnowNLP 进行情感分析
+    s = SnowNLP(text)
+    sentiment_score = s.sentiments  # 情感得分（0-1，越接近1表示越积极）
+    return sentiment_score
+
+# 对每条标题进行情感分析
+sentiment_results = []
+for title in titles:
+    try:
+        sentiment_score = analyze_sentiment(title)
+        sentiment_results.append(sentiment_score)
+    except Exception as e:
+        print(f"情感分析失败: {title}, 错误: {str(e)}")
+        sentiment_results.append(None)  # 如果分析失败，记录为 None
+
+# 将情感分析结果添加到 DataFrame
+df["情感得分"] = sentiment_results
+
+# 根据情感得分分类
+def classify_sentiment(score):
+    if score is None:
+        return "未知"
+    elif score >= 0.6:
+        return "积极"
+    elif score <= 0.4:
+        return "消极"
+    else:
+        return "中性"
+
+df["情感分类"] = df["情感得分"].apply(classify_sentiment)
+
+# 保存结果到新的 CSV 文件
+output_path = r"D:\tensorflow\deepseek_news_with_sentiment.csv"
+df.to_csv(output_path, index=False, encoding='utf-8')
+print(f"情感分析结果已保存到 {output_path}")
+
+# 打印情感分析统计结果
+print("\n情感分析统计结果:")
+print(df["情感分类"].value_counts())
+
+# 生成情感分析结果饼图
+sentiment_counts = df["情感分类"].value_counts()
+
+# 设置饼图参数
+labels = sentiment_counts.index
+sizes = sentiment_counts.values
+colors = ['#ff9999', '#66b3ff', '#99ff99', '#ffcc99']
+
+# 动态设置 explode 参数
+explode = [0.1 if i == 0 else 0 for i in range(len(labels))]
+
+# 打印字体文件路径，确认路径正确
+font_path = r"C:\Windows\Fonts\simhei.ttf"  # 确保路径正确
+print(f"字体文件路径: {font_path}")
+
+# 检查字体文件是否存在
+if not os.path.exists(font_path):
+    print(f"字体文件 {font_path} 不存在，请检查路径或安装中文字体。")
+else:
+    # 设置中文字体
+    plt.rcParams['font.sans-serif'] = ['SimHei']  # 设置中文字体
+    plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
+
+    # 绘制饼图
+    plt.figure(figsize=(8, 8))
+    plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
+    plt.axis('equal')  # 使饼图为正圆
+    plt.title("情感分析结果饼图")
+    plt.show()
+
+    # 保存饼图为图像文件
+    pie_chart_path = r"D:\tensorflow\sentiment_pie_chart.png"
+    plt.savefig(pie_chart_path)
+    print(f"情感分析结果饼图已保存到 {pie_chart_path}")
             <pre>
 from snownlp import SnowNLP
 
